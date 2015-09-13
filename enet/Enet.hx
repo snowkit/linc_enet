@@ -1,10 +1,10 @@
-package soloud;
+package enet;
 
 @:keep
-@:include('linc_empty.h')
+@:include('linc_enet.h')
 @:build(linc.Linc.touch())
-@:build(linc.Linc.xml('empty'))
-extern class Empty {
+@:build(linc.Linc.xml('enet'))
+extern class Enet {
 
         //external native function definition
         //can be wrapped in linc::libname or call directly
@@ -19,4 +19,4 @@ extern class Empty {
     //     trace('empty project example');
     // }
 
-} //Empty
+} //Enet
