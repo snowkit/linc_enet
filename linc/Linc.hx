@@ -40,8 +40,21 @@ class Linc {
         var _class = Context.getLocalClass();
 
         var _source_path = Path.directory(_pos_info.file);
+
+        trace(_source_path);
+
         if( !Path.isAbsolute(_source_path) ) {
-            _source_path = Path.join([Sys.getCwd(), _source_path]);
+            var cwd = Sys.getCwd();
+
+            // make sure we dont have a cygwin path
+            if (StringTools.startsWith(cwd, "/cygdrive/")) {
+                var tmp = cwd.substr(10,cwd.length);
+                var tokens = tmp.split("/");
+                tokens[0] += ":";
+                cwd = tokens.join("/");
+            }
+
+            _source_path = Path.join([cwd, _source_path]);
         }
 
         _source_path = Path.normalize(_source_path);
@@ -50,9 +63,18 @@ class Linc {
         var _linc_include_path = Path.normalize(Path.join([ _linc_lib_path, './linc/linc_${_lib}.xml' ]));
         var _linc_lib_var = 'LINC_${_lib.toUpperCase()}_PATH';
 
+        trace(_linc_lib_path);
+        trace(_linc_include_path);
+        trace(_linc_lib_var);
+
+
         var _define = '<set name="$_linc_lib_var" value="$_linc_lib_path/"/>';
         var _import_path = '$${$_linc_lib_var}linc/linc_${_lib}.xml';
         var _import = '<include name="$_import_path" />';
+
+        trace(_define);
+        trace(_import_path);
+        trace(_import);
 
         _class.get().meta.add(":buildXml", [{ expr:EConst( CString( '$_define\n$_import' ) ), pos:_pos }], _pos );
         

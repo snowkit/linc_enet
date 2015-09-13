@@ -1,10 +1,11 @@
 -main Test.hx
 -cpp cpp/
 -cp ../
+
 # pick a target
 
 #-D mac
-#-D windows
+-D windows
 #-D linux
 
 # To build 32 or 64 bit

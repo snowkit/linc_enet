@@ -1,7 +1,7 @@
 <xml>
 	
-	<set name="NATIVE_TOOLKIT_PATH" value="${LINC_ENET_PATH}/lib/" />
-    <include name="${LINC_OGG_PATH}/lib/enet/files.xml"/>
+	<set name="NATIVE_TOOLKIT_PATH" value="${LINC_ENET_PATH}lib/" />
+    <include name="${LINC_ENET_PATH}lib/enet/files.xml"/>
 
     <files id='haxe'>
 
@@ -10,14 +10,19 @@
 
         <compilerflag value="-I${NATIVE_TOOLKIT_PATH}/enet/include/"/>
 
-        <include name="${LINC_OGG_PATH}/lib/enet/defines.xml"/>
+        <include name="${LINC_ENET_PATH}lib/enet/defines.xml"/>
 
-        <file name='${LINC_OGG_PATH}/linc/linc_enet.cpp' />
+        <file name='${LINC_ENET_PATH}linc/linc_enet.cpp' />
     </files>
 
     <target id="haxe">
 
     	<files id="native-toolkit-enet"/>
+
+        <section if="windows">
+            <lib name="winmm.lib" />
+            <lib name="ws2_32.lib"  />
+        </section>
 
     </target>
 

@@ -1,9 +1,11 @@
 #ifndef _LINC_ENET_H_
 #define _LINC_ENET_H_
-    
-#include "enet/enet.h"
 
 #include <hxcpp.h>
+
+#undef RegisterClass
+#include "enet/enet.h"
+#undef RegisterClass
 
 namespace linc {
 
