@@ -1,0 +1,24 @@
+<xml>
+	
+	<set name="NATIVE_TOOLKIT_PATH" value="${LINC_ENET_PATH}/lib/" />
+    <include name="${LINC_OGG_PATH}/lib/enet/files.xml"/>
+
+    <files id='haxe'>
+
+    	<compilerflag value='-I${LINC_ENET_PATH}/lib/'/>
+        <compilerflag value='-I${LINC_ENET_PATH}/linc/'/>
+
+        <compilerflag value="-I${NATIVE_TOOLKIT_PATH}/enet/include/"/>
+
+        <include name="${LINC_OGG_PATH}/lib/enet/defines.xml"/>
+
+        <file name='${LINC_OGG_PATH}/linc/linc_enet.cpp' />
+    </files>
+
+    <target id="haxe">
+
+    	<files id="native-toolkit-enet"/>
+
+    </target>
+
+</xml>

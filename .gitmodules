@@ -1,0 +1,3 @@
+[submodule "lib/enet"]
+	path = lib/enet
+	url = https://github.com/native-toolkit/enet.git
