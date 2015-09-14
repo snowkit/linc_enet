@@ -1,5 +1,7 @@
 package enet;
 
+import cpp.CastCharStar;
+import cpp.ConstCharStar;
 import cpp.ConstPointer;
 import cpp.Pointer;
 import cpp.Int16;
@@ -551,7 +553,8 @@ extern class ENet {
       @retval < 0 on failure
       @returns the address of the given hostName in address on success
   */
-  //ENET_API int enet_address_set_host (ENetAddress * address, const char * hostName);
+  @:native("::enet_address_set_host")
+  static function address_set_host (_address:Pointer<ENetAddress>, _hostName:ConstCharStar):Int;
 
   /** Gives the printable form of the IP address specified in the address parameter.
       @param address    address printed
@@ -561,7 +564,8 @@ extern class ENet {
       @retval 0 on success
       @retval < 0 on failure
   */
-  //ENET_API int enet_address_get_host_ip (const ENetAddress * address, char * hostName, size_t nameLength);
+  @:native("::enet_address_get_host_ip")
+  static function address_get_host_ip (_address:ConstPointer<ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
 
   /** Attempts to do a reverse lookup of the host field in the address parameter.
       @param address    address used for reverse lookup
@@ -571,7 +575,8 @@ extern class ENet {
       @retval 0 on success
       @retval < 0 on failure
   */
-  //ENET_API int enet_address_get_host (const ENetAddress * address, char * hostName, size_t nameLength);
+  @:native("::enet_address_get_host")
+  static function enet_address_get_host (_address:ConstPointer<ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
 
 
   /*
