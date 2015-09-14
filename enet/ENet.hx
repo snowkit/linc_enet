@@ -576,15 +576,22 @@ extern class ENet {
       @retval < 0 on failure
   */
   @:native("::enet_address_get_host")
-  static function enet_address_get_host (_address:ConstPointer<ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
+  static function address_get_host (_address:ConstPointer<ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
 
+  
+  @:native("::enet_packet_create")
+  static function packet_create (_data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32):Pointer<ENetPacket>;
 
-  /*
-  ENET_API ENetPacket * enet_packet_create (const void *, size_t, enet_uint32);
-  ENET_API void         enet_packet_destroy (ENetPacket *);
-  ENET_API int          enet_packet_resize  (ENetPacket *, size_t);
-  ENET_API enet_uint32  enet_crc32 (const ENetBuffer *, size_t);
-                  
+  @:native("::enet_packet_destroy")
+  static function packet_destroy (_packet:Pointer<ENetPacket>):Void;
+
+  @:native("::enet_packet_resize")
+  static function packet_resize (_packet:Pointer<ENetPacket>, _dataLength:Int):Int;
+
+  @:native("::enet_crc32")
+  static function crc32 (_buffers:ConstPointer<ENetBuffer>, _bufferCount:Int):UInt32;
+  
+  /*                
   ENET_API ENetHost * enet_host_create (const ENetAddress *, size_t, size_t, enet_uint32, enet_uint32);
   ENET_API void       enet_host_destroy (ENetHost *);
   ENET_API ENetPeer * enet_host_connect (ENetHost *, const ENetAddress *, size_t, enet_uint32);
