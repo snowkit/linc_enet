@@ -54,16 +54,14 @@ from Int to Int {
 } // ENetProtocolFlag
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolHeader>")
+@:include('linc_enet.h') @:native("::ENetProtocolHeader")
 extern class ENetProtocolHeader {
     var peerID:UInt16;
     var sentTime:UInt16;
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolCommandHeader>")
+@:include('linc_enet.h') @:native("::ENetProtocolCommandHeader")
 extern class ENetProtocolCommandHeader {
     var command:UInt8;
     var channelID:UInt8;
@@ -71,8 +69,7 @@ extern class ENetProtocolCommandHeader {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolAcknowledge>")
+@:include('linc_enet.h') @:native("::ENetProtocolAcknowledge")
 extern class ENetProtocolAcknowledge {
     var header:ENetProtocolCommandHeader;
     var receivedReliableSequenceNumber:UInt16;
@@ -80,8 +77,7 @@ extern class ENetProtocolAcknowledge {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolConnect>")
+@:include('linc_enet.h') @:native("::ENetProtocolConnect")
 extern class ENetProtocolConnect {
     var header:ENetProtocolCommandHeader;
     var outgoingPeerID:UInt16;
@@ -100,8 +96,7 @@ extern class ENetProtocolConnect {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolVerifyConnect>")
+@:include('linc_enet.h') @:native("::ENetProtocolVerifyConnect")
 extern class ENetProtocolVerifyConnect {
     var header:ENetProtocolCommandHeader;
     var outgoingPeerID:UInt16;
@@ -119,8 +114,7 @@ extern class ENetProtocolVerifyConnect {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolBandwidthLimit>")
+@:include('linc_enet.h') @:native("::ENetProtocolBandwidthLimit")
 extern class ENetProtocolBandwidthLimit {
     var header:ENetProtocolCommandHeader;
     var incomingBandwidth:UInt32;
@@ -128,8 +122,7 @@ extern class ENetProtocolBandwidthLimit {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolThrottleConfigure>")
+@:include('linc_enet.h') @:native("::ENetProtocolThrottleConfigure")
 extern class ENetProtocolThrottleConfigure {
     var header:ENetProtocolCommandHeader;
     var packetThrottleInterval:UInt32;
@@ -138,31 +131,27 @@ extern class ENetProtocolThrottleConfigure {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolDisconnect>")
+@:include('linc_enet.h') @:native("::ENetProtocolDisconnect")
 extern class ENetProtocolDisconnect {
     var header:ENetProtocolCommandHeader;
     var data:UInt32;
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolPing>")
+@:include('linc_enet.h') @:native("::ENetProtocolPing")
 extern class ENetProtocolPing {
     var header:ENetProtocolCommandHeader;
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolSendReliable>")
+@:include('linc_enet.h') @:native("::ENetProtocolSendReliable")
 extern class ENetProtocolSendReliable {
     var header:ENetProtocolCommandHeader;
     var dataLength:UInt16;
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolSendUnreliable>")
+@:include('linc_enet.h') @:native("::ENetProtocolSendUnreliable")
 extern class ENetProtocolSendUnreliable {
     var header:ENetProtocolCommandHeader;
     var unreliableSequenceNumber:UInt16;
@@ -170,8 +159,7 @@ extern class ENetProtocolSendUnreliable {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolSendUnsequenced>")
+@:include('linc_enet.h') @:native("::ENetProtocolSendUnsequenced")
 extern class ENetProtocolSendUnsequenced {
     var header:ENetProtocolCommandHeader;
     var unsequencedGroup:UInt16;
@@ -179,8 +167,7 @@ extern class ENetProtocolSendUnsequenced {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocolSendFragment>")
+@:include('linc_enet.h') @:native("::ENetProtocolSendFragment")
 extern class ENetProtocolSendFragment {
     var header:ENetProtocolCommandHeader;
     var startSequenceNumber:UInt16;
@@ -192,8 +179,7 @@ extern class ENetProtocolSendFragment {
 }
 
 @:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetProtocol>")
+@:include('linc_enet.h') @:native("::ENetProtocol")
 extern class ENetProtocol {
     var header:ENetProtocolCommandHeader;
     var acknowledge:ENetProtocolAcknowledge;

@@ -83,13 +83,15 @@ from Int to Int {
   * but not for enet_host_create.  Once a server responds to a broadcast, the
   * address is updated from ENET_HOST_BROADCAST to the server's actual IP address.
   */
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetAddress>")
-extern class ENetAddress {
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetAddress")
+extern private class Native_ENetAddress {
   var host:Int32;
   var port:Int16;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetAddress>")
+extern class ENetAddress extends Native_ENetAddress {}
+
 
 /**
   * Packet flag bit constants.
@@ -139,10 +141,9 @@ from Int to Int {
  
    @sa ENetPacketFlag
  */
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetPacket>")
-extern class ENetPacket {
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetPacket")
+extern class Native_ENetPacket {
   var referenceCount:Int32; 
   var flags:UInt32;
   var data:Pointer<UInt8>;
@@ -150,21 +151,23 @@ extern class ENetPacket {
   //var ENetPacketFreeCallback   freeCallback;  // TODO: callbacks 
   var userData:Pointer<Void>;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetPacket>")
+extern class ENetPacket extends Native_ENetPacket {}
 
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetAcknowledgement>")
-extern class ENetAcknowledgement {
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetAcknowledgement")
+extern private class Native_ENetAcknowledgement {
   var acknowledgementList:ENetListNode;
   var sentTime:UInt32;
   var command:ENetProtocol;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetAcknowledgement>")
+extern class ENetAcknowledgement extends Native_ENetAcknowledgement {}
 
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetOutgoingCommand>")
-extern class ENetOutgoingCommand {
-  var outgoingCommandList:ENetListNode;
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetOutgoingCommand")
+extern private class Native_ENetOutgoingCommand {
+  var outgoingCommandList:Native_ENetListNode;
   var reliableSequenceNumber:UInt16;
   var unreliableSequenceNumber:UInt16;
   var sentTime:UInt32;
@@ -174,22 +177,25 @@ extern class ENetOutgoingCommand {
   var fragmentLength:UInt16;
   var sendAttempts:UInt16;
   var command:ENetProtocol;
-  var packet:Pointer<ENetPacket>;
+  var packet:Pointer<Native_ENetPacket>;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetOutgoingCommand>")
+extern class ENetOutgoingCommand extends Native_ENetOutgoingCommand {}
 
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetIncomingCommand>")
-extern class ENetIncomingCommand {
-  var incomingCommandList:ENetListNode;
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetIncomingCommand")
+extern private class Native_ENetIncomingCommand {
+  var incomingCommandList:Native_ENetListNode;
   var reliableSequenceNumber:UInt16;
   var unreliableSequenceNumber:UInt16;
   var command:ENetProtocol;
   var fragmentCount:UInt32;
   var fragmentsRemaining:UInt32;
   var fragments:Pointer<UInt32>;
-  var packet:Pointer<ENetPacket>;
+  var packet:Pointer<Native_ENetPacket>;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetIncomingCommand>")
+extern class ENetIncomingCommand extends Native_ENetIncomingCommand {}
 
 @:enum
 abstract ENetPeerState(Int)
@@ -207,32 +213,33 @@ from Int to Int {
 } // ENetPeerState
 
 
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetChannel>")
-extern class ENetChannel {
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetChannel")
+extern private class Native_ENetChannel {
   var outgoingReliableSequenceNumber:UInt16;
   var outgoingUnreliableSequenceNumber:UInt16;
   var usedReliableWindows:UInt16;
-  //@:native("enet_uint16[]")
-  // enet_uint16  reliableWindows [ENET_PEER_RELIABLE_WINDOWS]; // TODO: Arrays?
+  @:native("enet_uint16[]")
+  var reliableWindows:Dynamic;
   var incomingReliableSequenceNumber:UInt16;
   var incomingUnreliableSequenceNumber:UInt16;
-  var incomingReliableCommands:ENetList;
-  var incomingUnreliableCommands:ENetList;
+  var incomingReliableCommands:Native_ENetList;
+  var incomingUnreliableCommands:Native_ENetList;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetChannel>")
+extern class ENetChannel extends Native_ENetChannel {}
 
 /**
  * An ENet peer which data packets may be sent or received from. 
  *
  * No fields should be modified unless otherwise specified. 
  */
-@:keep
+@:noCompletion
 @:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetPeer>")
-extern class ENetPeer {
-  var dispatchList:ENetListNode;
-  var host:Pointer<ENetHost>;
+@:include('linc_enet.h') @:native("::ENetPeer")
+extern private class Native_ENetPeer {
+  var dispatchList:Native_ENetListNode;
+  var host:ENetHost;
   var outgoingPeerID:UInt16;
   var incomingPeerID:UInt16;
   var connectID:UInt32;
@@ -241,7 +248,7 @@ extern class ENetPeer {
   var address:ENetAddress;
   var data:Pointer<Void>; 
   var state:ENetPeerState;
-  var channels:Pointer<ENetChannel>;
+  var channels:Pointer<Native_ENetChannel>;
   var channelCount:Int;
   var incomingBandwidth:UInt32;  
   var outgoingBandwidth:UInt32;  
@@ -279,26 +286,29 @@ extern class ENetPeer {
   var windowSize:UInt32;
   var reliableDataInTransit:UInt32;
   var outgoingReliableSequenceNumber:UInt16;
-  var acknowledgements:ENetList;
-  var sentReliableCommands:ENetList;
-  var sentUnreliableCommands:ENetList;
-  var outgoingReliableCommands:ENetList;
-  var outgoingUnreliableCommands:ENetList;
-  var dispatchedCommands:ENetList;
+  var acknowledgements:Native_ENetList;
+  var sentReliableCommands:Native_ENetList;
+  var sentUnreliableCommands:Native_ENetList;
+  var outgoingReliableCommands:Native_ENetList;
+  var outgoingUnreliableCommands:Native_ENetList;
+  var dispatchedCommands:Native_ENetList;
   var needsDispatch:Int;
   var incomingUnsequencedGroup:UInt16;
   var outgoingUnsequencedGroup:UInt16;
-  //var unsequencedWindow [ENET_PEER_UNSEQUENCED_WINDOW_SIZE / 32]; // TODO: Arrays?
+  @:native("enet_uint32[]")
+  var unsequencedWindow:Dynamic;
   var eventData:UInt32;
   var totalWaitingData:Int;
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetPeer>")
+extern class ENetPeerStruct extends Native_ENetPeer {}
+typedef ENetPeer = Pointer<Native_ENetPeer>;
 
 /** An ENet packet compressor for compressing UDP packets before socket sends or receives.
  */
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetCompressor>")
-extern class ENetCompressor { // TODO:
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetCompressor")
+extern private class Native_ENetCompressor { // TODO:
   /** Context data for the compressor. Must be non-NULL. */
   //void * context;
   /** Compresses from inBuffers[0:inBufferCount-1], containing inLimit bytes, to outData, outputting at most outLimit bytes. Should return 0 on failure. */
@@ -308,6 +318,8 @@ extern class ENetCompressor { // TODO:
   /** Destroys the context when compression is disabled or the host is destroyed. May be NULL. */
   //void (ENET_CALLBACK * destroy) (void * context);
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetCompressor>")
+extern class ENetCompressor extends Native_ENetCompressor {}
 
 /** Callback that computes the checksum of the data held in buffers[0:bufferCount-1] */
 //typedef enet_uint32 (ENET_CALLBACK * ENetChecksumCallback) (const ENetBuffer * buffers, size_t bufferCount);
@@ -332,23 +344,22 @@ extern class ENetCompressor { // TODO:
     @sa enet_host_bandwidth_limit()
     @sa enet_host_bandwidth_throttle()
   */
-@:keep
-@:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetHost>")
-extern class ENetHost {
+@:noCompletion
+@:include('linc_enet.h') @:native("::ENetHost")
+extern private class Native_ENetHost {
   var socket:ENetSocket;
-  var address:ENetAddress;            /**< Internet address of the host */
+  var address:Native_ENetAddress;            /**< Internet address of the host */
   var incomingBandwidth:UInt32;       /**< downstream bandwidth of the host */
   var outgoingBandwidth:UInt32;       /**< upstream bandwidth of the host */
   var bandwidthThrottleEpoch:UInt32;
   var mtu:UInt32;
   var randomSeed:UInt32;
   var recalculateBandwidthLimits:Int;
-  var peers:Pointer<ENetPeer>;        /**< array of peers allocated for this host */
+  var peers:Pointer<Native_ENetPeer>;        /**< array of peers allocated for this host */
   var peerCount:Int;                  /**< number of peers allocated for this host */
   var channelLimit:Int;               /**< maximum number of channels allowed for connected peers */
   var serviceTime:UInt32;
-  var dispatchQueue:ENetList;
+  var dispatchQueue:Native_ENetList;
   var continueSending:Int;
   var packetSize:Int;
   var headerFlags:UInt16;
@@ -357,9 +368,9 @@ extern class ENetHost {
   //ENetBuffer           buffers [ENET_BUFFER_MAXIMUM];
   var bufferCount:Int;
   //ENetChecksumCallback checksum;    /**< callback the user can set to enable packet checksums for this host */
-  var compressor:ENetCompressor;
+  var compressor:Native_ENetCompressor;
   //enet_uint8           packetData [2][ENET_PROTOCOL_MAXIMUM_MTU];
-  var receivedAddress:ENetAddress;
+  var receivedAddress:Native_ENetAddress;
   var receivedData:Pointer<UInt8>;
   var receivedDataLength:Int;
   var totalSentData:UInt32;           /**< total data sent, user should reset to 0 as needed to prevent overflow */
@@ -373,6 +384,9 @@ extern class ENetHost {
   var maximumPacketSize:Int;          /**< the maximum allowable packet size that may be sent or received on a peer */
   var maximumWaitingData:Int;         /**< the maximum aggregate amount of buffer space a peer may use waiting for packets to be delivered */
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetHost>")
+extern class ENetHostStruct extends Native_ENetHost {}
+typedef ENetHost = Pointer<Native_ENetHost>;
 
 @:enum
 abstract ENetEventType(Int)
@@ -408,16 +422,18 @@ from Int to Int {
    
    @sa enet_host_service
  */
-@:keep
+@:noCompletion
 @:structAccess
-@:include('linc_enet.h') @:native("::cpp::Struct<ENetEvent>")
-extern class ENetEvent {
+@:include('linc_enet.h') @:native("::ENetEvent")
+extern class Native_ENetEvent {
   var type:ENetEventType;         /**< type of the event */
-  var peer:Pointer<ENetPeer>;     /**< peer that generated a connect, disconnect or receive event */
+  var peer:Pointer<Native_ENetPeer>;     /**< peer that generated a connect, disconnect or receive event */
   var channelID:UInt8;            /**< channel on the peer that generated the event, if appropriate */
   var data:UInt32;                /**< data associated with the event, if appropriate */
-  var packet:Pointer<ENetPacket>; /**< packet associated with the event, if appropriate */
+  var packet:Pointer<Native_ENetPacket>; /**< packet associated with the event, if appropriate */
 }
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetEvent>")
+extern class ENetEvent extends Native_ENetEvent {}
 
 
 @:keep
@@ -503,25 +519,25 @@ extern class ENet {
   static function socket_create (_t:ENetSocketType):ENetSocket;
 
   @:native('::enet_socket_bind')
-  static function socket_bind (_s:ENetSocket, _a:ConstPointer<ENetAddress>):Int;
+  static function socket_bind (_s:ENetSocket, _a:ConstPointer<Native_ENetAddress>):Int;
 
   @:native('::enet_socket_get_address')
-  static function socket_get_address (_s:ENetSocket, _a:Pointer<ENetAddress>):Int;
+  static function socket_get_address (_s:ENetSocket, _a:Pointer<Native_ENetAddress>):Int;
   
   @:native('::enet_socket_listen')
   static function socket_listen (_s:ENetSocket, _c:Int):Int;
 
   @:native('::enet_socket_accept')
-  static function socket_accept (_s:ENetSocket, _a:Pointer<ENetAddress>):ENetSocket;
+  static function socket_accept (_s:ENetSocket, _a:Pointer<Native_ENetAddress>):ENetSocket;
 
   @:native('::enet_socket_connect')
-  static function socket_connect (_s:ENetSocket, _a:ConstPointer<ENetAddress>):Int;
+  static function socket_connect (_s:ENetSocket, _a:ConstPointer<Native_ENetAddress>):Int;
 
   @:native('::enet_socket_send')
-  static function socket_send (_s:ENetSocket, _a:ConstPointer<ENetAddress>, _b:ConstPointer<ENetBuffer>, _l:Int):Int;
+  static function socket_send (_s:ENetSocket, _a:ConstPointer<Native_ENetAddress>, _b:ConstPointer<ENetBuffer>, _l:Int):Int;
 
   @:native('::enet_socket_receive')
-  static function socket_receive (_s:ENetSocket, _a:Pointer<ENetAddress>, _b:Pointer<ENetBuffer>, _l:Int):Int;
+  static function socket_receive (_s:ENetSocket, _a:Pointer<Native_ENetAddress>, _b:Pointer<ENetBuffer>, _l:Int):Int;
 
   @:native('::enet_socket_wait')
   static function socket_wait (_s:ENetSocket, _condition:Pointer<UInt32>, _timeout:UInt32):Int;
@@ -554,7 +570,7 @@ extern class ENet {
       @returns the address of the given hostName in address on success
   */
   @:native("::enet_address_set_host")
-  static function address_set_host (_address:Pointer<ENetAddress>, _hostName:ConstCharStar):Int;
+  static function address_set_host (_address:Pointer<Native_ENetAddress>, _hostName:String):Int;
 
   /** Gives the printable form of the IP address specified in the address parameter.
       @param address    address printed
@@ -565,7 +581,7 @@ extern class ENet {
       @retval < 0 on failure
   */
   @:native("::enet_address_get_host_ip")
-  static function address_get_host_ip (_address:ConstPointer<ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
+  static function address_get_host_ip (_address:ConstPointer<Native_ENetAddress>, _hostName:String, _nameLength:Int):Int;
 
   /** Attempts to do a reverse lookup of the host field in the address parameter.
       @param address    address used for reverse lookup
@@ -576,121 +592,121 @@ extern class ENet {
       @retval < 0 on failure
   */
   @:native("::enet_address_get_host")
-  static function address_get_host (_address:ConstPointer<ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
+  static function address_get_host (_address:ConstPointer<Native_ENetAddress>, _hostName:CastCharStar, _nameLength:Int):Int;
 
   
   @:native("::enet_packet_create")
-  static function packet_create (_data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32):Pointer<ENetPacket>;
+  static function packet_create (_data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32):Pointer<Native_ENetPacket>;
 
   @:native("::enet_packet_destroy")
-  static function packet_destroy (_packet:Pointer<ENetPacket>):Void;
+  static function packet_destroy (_packet:Pointer<Native_ENetPacket>):Void;
 
   @:native("::enet_packet_resize")
-  static function packet_resize (_packet:Pointer<ENetPacket>, _dataLength:Int):Int;
+  static function packet_resize (_packet:Pointer<Native_ENetPacket>, _dataLength:Int):Int;
 
   @:native("::enet_crc32")
   static function crc32 (_buffers:ConstPointer<ENetBuffer>, _bufferCount:Int):UInt32;
   
   
   @:native("::enet_host_create")
-  static function host_create (_address:ConstPointer<ENetAddress>, _peerCount:Int, _channelLimit:Int, _incomingBandwidth:UInt32, _outgoingBandwidth:UInt32):Pointer<ENetHost>;
+  static function host_create (_address:ConstPointer<Native_ENetAddress>, _peerCount:Int, _channelLimit:Int, _incomingBandwidth:UInt32, _outgoingBandwidth:UInt32):ENetHost;
 
   @:native("::enet_host_destroy")
-  static function host_destroy (_host:Pointer<ENetHost>):Void;
+  static function host_destroy (_host:ENetHost):Void;
 
   @:native("::enet_host_connect")
-  static function host_connect (_host:Pointer<ENetHost>, _address:ConstPointer<ENetAddress>, _channelCount:Int, _data:UInt32):Pointer<ENetPeer>;
+  static function host_connect (_host:ENetHost, _address:ConstPointer<Native_ENetAddress>, _channelCount:Int, _data:UInt32):ENetPeer;
 
   @:native("::enet_host_check_events")
-  static function host_check_events (_host:Pointer<ENetHost>, _event:Pointer<ENetEvent>):Int;
+  static function host_check_events (_host:ENetHost, _event:Pointer<Native_ENetEvent>):Int;
 
   @:native("::enet_host_service")
-  static function host_service (_host:Pointer<ENetHost>, _event:Pointer<ENetEvent>, _timeout:UInt32):Int;
+  static function host_service (_host:ENetHost, _event:Pointer<Native_ENetEvent>, _timeout:UInt32):Int;
 
   @:native("::enet_host_flush")
-  static function host_flush (_host:Pointer<ENetHost>):Void;
+  static function host_flush (_host:ENetHost):Void;
 
   @:native("::enet_host_broadcast")
-  static function host_broadcast (_host:Pointer<ENetHost>, _channelID:UInt8, _packet:Pointer<ENetPacket>):Void;
+  static function host_broadcast (_host:ENetHost, _channelID:UInt8, _packet:Pointer<Native_ENetPacket>):Void;
 
   @:native("::enet_host_compress")
-  static function host_compress (_host:Pointer<ENetHost>, _compressor:ConstPointer<ENetCompressor>):Void;
+  static function host_compress (_host:ENetHost, _compressor:ConstPointer<Native_ENetCompressor>):Void;
 
   @:native("::enet_host_compress_with_range_coder")
-  static function host_compress_with_range_coder (_host:Pointer<ENetHost>):Int;
+  static function host_compress_with_range_coder (_host:ENetHost):Int;
 
   @:native("::enet_host_channel_limit")
-  static function host_channel_limit (_host:Pointer<ENetHost>, _channelLimit:Int):Void;
+  static function host_channel_limit (_host:ENetHost, _channelLimit:Int):Void;
 
   @:native("::enet_host_bandwidth_limit")
-  static function host_bandwidth_limit (_host:Pointer<ENetHost>, _incomingBandwidth:UInt32, _outgoingBandwidth:UInt32):Void;
+  static function host_bandwidth_limit (_host:ENetHost, _incomingBandwidth:UInt32, _outgoingBandwidth:UInt32):Void;
 
   @:native("::enet_host_bandwidth_throttle")
-  static function host_bandwidth_throttle (_host:Pointer<ENetHost>):Void;
+  static function host_bandwidth_throttle (_host:ENetHost):Void;
 
   @:native("::enet_host_random_seed")
   static function host_random_seed():UInt32;
 
   
   @:native("::enet_peer_send")
-  static function peer_send (_peer:Pointer<ENetPeer>, _channelID:UInt8, _packet:Pointer<ENetPacket>):Int;
+  static function peer_send (_peer:Pointer<Native_ENetPeer>, _channelID:UInt8, _packet:Pointer<Native_ENetPacket>):Int;
 
   @:native("::enet_peer_receive")
-  static function peer_receive (_peer:Pointer<ENetPeer>, _channelID:Pointer<UInt8>):Pointer<ENetPacket>;
+  static function peer_receive (_peer:Pointer<Native_ENetPeer>, _channelID:Pointer<UInt8>):Pointer<Native_ENetPacket>;
 
   @:native("::enet_peer_ping")
-  static function peer_ping (_peer:Pointer<ENetPeer>):Void;
+  static function peer_ping (_peer:Pointer<Native_ENetPeer>):Void;
 
   @:native("::enet_peer_ping_interval")
-  static function peer_ping_interval (_peer:Pointer<ENetPeer>, _pingInterval:UInt32):Void;
+  static function peer_ping_interval (_peer:Pointer<Native_ENetPeer>, _pingInterval:UInt32):Void;
 
   @:native("::enet_peer_timeout")
-  static function peer_timeout (_peer:Pointer<ENetPeer>, _timeoutLimit:UInt32, _timeoutMinimum:UInt32, _timeoutMaximum:UInt32):Void;
+  static function peer_timeout (_peer:Pointer<Native_ENetPeer>, _timeoutLimit:UInt32, _timeoutMinimum:UInt32, _timeoutMaximum:UInt32):Void;
 
   @:native("::enet_peer_reset")
-  static function peer_reset (_peer:Pointer<ENetPeer>):Void;
+  static function peer_reset (_peer:Pointer<Native_ENetPeer>):Void;
 
   @:native("::enet_peer_disconnect")
-  static function peer_disconnect (_peer:Pointer<ENetPeer>, _data:UInt32):Void;
+  static function peer_disconnect (_peer:Pointer<Native_ENetPeer>, _data:UInt32):Void;
 
   @:native("::enet_peer_disconnect_now")
-  static function peer_disconnect_now (_peer:Pointer<ENetPeer>, _data:UInt32):Void;
+  static function peer_disconnect_now (_peer:Pointer<Native_ENetPeer>, _data:UInt32):Void;
 
   @:native("::enet_peer_disconnect_later")
-  static function peer_disconnect_later (_peer:Pointer<ENetPeer>, _data:UInt32):Void;
+  static function peer_disconnect_later (_peer:Pointer<Native_ENetPeer>, _data:UInt32):Void;
 
   @:native("::enet_peer_throttle_configure")
-  static function peer_throttle_configure (_peer:Pointer<ENetPeer>, _interval:UInt32, _acceleration:UInt32, deceleration:UInt32):Void;
+  static function peer_throttle_configure (_peer:Pointer<Native_ENetPeer>, _interval:UInt32, _acceleration:UInt32, deceleration:UInt32):Void;
 
   @:native("::enet_peer_throttle")
-  static function peer_throttle (_peer:Pointer<ENetPeer>, _roundTripTime:UInt32):Int;
+  static function peer_throttle (_peer:Pointer<Native_ENetPeer>, _roundTripTime:UInt32):Int;
 
   @:native("::enet_peer_reset_queues")
-  static function peer_reset_queues (_peer:Pointer<ENetPeer>):Void;
+  static function peer_reset_queues (_peer:Pointer<Native_ENetPeer>):Void;
 
   @:native("::enet_peer_setup_outgoing_command")
-  static function peer_setup_outgoing_command (_peer:Pointer<ENetPeer>, _outgoingCommand:Pointer<ENetOutgoingCommand>):Void;
+  static function peer_setup_outgoing_command (_peer:Pointer<Native_ENetPeer>, _outgoingCommand:Pointer<Native_ENetOutgoingCommand>):Void;
 
   @:native("::enet_peer_queue_outgoing_command")
-  static function peer_queue_outgoing_command (_peer:Pointer<ENetPeer>, _command:ConstPointer<ENetProtocol>, _packet:Pointer<ENetPacket>, _offset:UInt32, _length:UInt16):Pointer<ENetOutgoingCommand>;
+  static function peer_queue_outgoing_command (_peer:Pointer<Native_ENetPeer>, _command:ConstPointer<ENetProtocol>, _packet:Pointer<ENetPacket>, _offset:UInt32, _length:UInt16):Pointer<Native_ENetOutgoingCommand>;
 
   @:native("::enet_peer_queue_incoming_command")
-  static function peer_queue_incoming_command (_peer:Pointer<ENetPeer>, _command:ConstPointer<ENetProtocol>, _data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32, _fragmentCount:UInt32):Pointer<ENetIncomingCommand>;
+  static function peer_queue_incoming_command (_peer:Pointer<Native_ENetPeer>, _command:ConstPointer<ENetProtocol>, _data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32, _fragmentCount:UInt32):Pointer<Native_ENetIncomingCommand>;
 
   @:native("::enet_peer_queue_acknowledgement")
-  static function peer_queue_acknowledgement (_peer:Pointer<ENetPeer>, _command:ConstPointer<ENetProtocol>, _sentTime:UInt16):Pointer<ENetAcknowledgement>;
+  static function peer_queue_acknowledgement (_peer:Pointer<Native_ENetPeer>, _command:ConstPointer<ENetProtocol>, _sentTime:UInt16):Pointer<Native_ENetAcknowledgement>;
 
   @:native("::enet_peer_dispatch_incoming_unreliable_commands")
-  static function peer_dispatch_incoming_unreliable_commands (_peer:Pointer<ENetPeer>, _channel:Pointer<ENetChannel>):Void;
+  static function peer_dispatch_incoming_unreliable_commands (_peer:Pointer<Native_ENetPeer>, _channel:Pointer<Native_ENetChannel>):Void;
 
   @:native("::enet_peer_dispatch_incoming_reliable_commands")
-  static function peer_dispatch_incoming_reliable_commands (_peer:Pointer<ENetPeer>, _channel:Pointer<ENetChannel>):Void;
+  static function peer_dispatch_incoming_reliable_commands (_peer:Pointer<Native_ENetPeer>, _channel:Pointer<Native_ENetChannel>):Void;
 
   @:native("::enet_peer_on_connect")
-  static function peer_on_connect (_peer:Pointer<ENetPeer>):Void;
+  static function peer_on_connect (_peer:Pointer<Native_ENetPeer>):Void;
 
   @:native("::enet_peer_on_disconnect")
-  static function peer_on_disconnect (_peer:Pointer<ENetPeer>):Void;
+  static function peer_on_disconnect (_peer:Pointer<Native_ENetPeer>):Void;
 
 
   @:native("::enet_range_coder_create")

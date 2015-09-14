@@ -1,18 +1,21 @@
--main Test.hx
+# build server
+-main Server.hx
 -cpp cpp/
 -cp ../
-
-# pick a target
-
+-debug
 #-D mac
 -D windows
 #-D linux
 
-# To build 32 or 64 bit
-#(if not using the default for your platform):
+--next
+# build client
+-main Client.hx
+-cpp cpp/
+-cp ../
+-debug
+#-D mac
+-D windows
+#-D linux
 
-#-D HXCPP_M64
-#-D HXCPP_M32
-
-#-cmd ./cpp/Test
-#-cmd ./cpp/Test.exe
+#-cmd ./cpp/Server-debug.exe
+#-cmd ./cpp/Client-debug.exe
