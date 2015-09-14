@@ -1,5 +1,6 @@
 package enet;
 
+import cpp.ConstPointer;
 import cpp.Pointer;
 import cpp.Int16;
 import cpp.Int32;
@@ -14,7 +15,23 @@ import enet.ENetProtocol;
 @:include('linc_enet.h') @:native("::ENetSocket")
 extern class ENetSocket {}
 
+@:keep
+@:include('linc_enet.h') @:native("::ENetSocketSet")
+extern class ENetSocketSet {}
+
 typedef ENetVersion = UInt32;
+
+@:keep
+@:include('linc_enet.h') @:native("::ENetBuffer")
+extern class ENetBuffer {
+#if windows 
+  var dataLength:Int;
+  var data:Pointer<Void>;
+#else 
+  var data:Pointer<Void>;
+  var dataLength:Int;
+#end
+}
 
 @:enum
 abstract ENetSocketType(Int)
@@ -480,22 +497,48 @@ extern class ENet {
   ////////////////////////////////////////////////////////////////////////////////
   // Socket functions
 
-  /*
-  ENET_API ENetSocket enet_socket_create (ENetSocketType);
-  ENET_API int        enet_socket_bind (ENetSocket, const ENetAddress *);
-  ENET_API int        enet_socket_get_address (ENetSocket, ENetAddress *);
-  ENET_API int        enet_socket_listen (ENetSocket, int);
-  ENET_API ENetSocket enet_socket_accept (ENetSocket, ENetAddress *);
-  ENET_API int        enet_socket_connect (ENetSocket, const ENetAddress *);
-  ENET_API int        enet_socket_send (ENetSocket, const ENetAddress *, const ENetBuffer *, size_t);
-  ENET_API int        enet_socket_receive (ENetSocket, ENetAddress *, ENetBuffer *, size_t);
-  ENET_API int        enet_socket_wait (ENetSocket, enet_uint32 *, enet_uint32);
-  ENET_API int        enet_socket_set_option (ENetSocket, ENetSocketOption, int);
-  ENET_API int        enet_socket_get_option (ENetSocket, ENetSocketOption, int *);
-  ENET_API int        enet_socket_shutdown (ENetSocket, ENetSocketShutdown);
-  ENET_API void       enet_socket_destroy (ENetSocket);
-  ENET_API int        enet_socketset_select (ENetSocket, ENetSocketSet *, ENetSocketSet *, enet_uint32);
-  */
+  @:native('::enet_time_set')
+  static function socket_create (_t:ENetSocketType):ENetSocket;
+
+  @:native('::enet_socket_bind')
+  static function socket_bind (_s:ENetSocket, _a:ConstPointer<ENetAddress>):Int;
+
+  @:native('::enet_socket_get_address')
+  static function socket_get_address (_s:ENetSocket, _a:Pointer<ENetAddress>):Int;
+  
+  @:native('::enet_socket_listen')
+  static function socket_listen (_s:ENetSocket, _c:Int):Int;
+
+  @:native('::enet_socket_accept')
+  static function socket_accept (_s:ENetSocket, _a:Pointer<ENetAddress>):ENetSocket;
+
+  @:native('::enet_socket_connect')
+  static function socket_connect (_s:ENetSocket, _a:ConstPointer<ENetAddress>):Int;
+
+  @:native('::enet_socket_send')
+  static function socket_send (_s:ENetSocket, _a:ConstPointer<ENetAddress>, _b:ConstPointer<ENetBuffer>, _l:Int):Int;
+
+  @:native('::enet_socket_receive')
+  static function socket_receive (_s:ENetSocket, _a:Pointer<ENetAddress>, _b:Pointer<ENetBuffer>, _l:Int):Int;
+
+  @:native('::enet_socket_wait')
+  static function socket_wait (_s:ENetSocket, _condition:Pointer<UInt32>, _timeout:UInt32):Int;
+
+  @:native('::enet_socket_set_option')
+  static function socket_set_option (_s:ENetSocket, _option:ENetSocketOption, _value:Int):Int;
+
+  @:native('::enet_socket_get_option')
+  static function socket_get_option (_s:ENetSocket, _option:ENetSocketOption, _value:Pointer<Int>):Int;
+
+  @:native('::enet_socket_shutdown')
+  static function socket_shutdown (_s:ENetSocket, _how:ENetSocketShutdown):Int;
+
+  @:native('::enet_socket_destroy')
+  static function socket_destroy (_s:ENetSocket):Void;
+
+  @:native('::enet_socketset_select')
+  static function socketset_select (_s:ENetSocket, _readSet:Pointer<ENetSocketSet>, _writeSet:Pointer<ENetSocketSet>, _timeout:UInt32):Int;
+
 
   ////////////////////////////////////////////////////////////////////////////////
   // Address functions
