@@ -1,6 +1,7 @@
 package enet;
 
 import cpp.Pointer;
+import cpp.Int32;
 
 @:keep
 @:structAccess
@@ -21,13 +22,13 @@ extern class ENetList {
     static function clear(_list:Pointer<ENetList>):Void;
 
     @:native('::enet_list_insert')
-    static function insert(_it:ENetListIterator, Pointer<Void>):ENetListIterator;
+    static function insert(_it:ENetListIterator, _n:Pointer<Void>):ENetListIterator;
 
     @:native('::enet_list_remove')
     static function remove(_it:ENetListIterator):Pointer<Void>;
 
     @:native('::enet_list_move')
-    static function insert(_it:ENetListIterator, Pointer<Void>, Pointer<Void>):ENetListIterator;
+    static function move(_it:ENetListIterator, _n0:Pointer<Void>, _n1:Pointer<Void>):ENetListIterator;
 
     @:native('::enet_list_size')
     static function size(_list:Pointer<ENetList>):Int32;
