@@ -631,28 +631,68 @@ extern class ENet {
   @:native("::enet_host_random_seed")
   static function host_random_seed():UInt32;
 
-  /*
-  ENET_API int                 enet_peer_send (ENetPeer *, enet_uint8, ENetPacket *);
-  ENET_API ENetPacket *        enet_peer_receive (ENetPeer *, enet_uint8 * channelID);
-  ENET_API void                enet_peer_ping (ENetPeer *);
-  ENET_API void                enet_peer_ping_interval (ENetPeer *, enet_uint32);
-  ENET_API void                enet_peer_timeout (ENetPeer *, enet_uint32, enet_uint32, enet_uint32);
-  ENET_API void                enet_peer_reset (ENetPeer *);
-  ENET_API void                enet_peer_disconnect (ENetPeer *, enet_uint32);
-  ENET_API void                enet_peer_disconnect_now (ENetPeer *, enet_uint32);
-  ENET_API void                enet_peer_disconnect_later (ENetPeer *, enet_uint32);
-  ENET_API void                enet_peer_throttle_configure (ENetPeer *, enet_uint32, enet_uint32, enet_uint32);
-  extern int                   enet_peer_throttle (ENetPeer *, enet_uint32);
-  extern void                  enet_peer_reset_queues (ENetPeer *);
-  extern void                  enet_peer_setup_outgoing_command (ENetPeer *, ENetOutgoingCommand *);
-  extern ENetOutgoingCommand * enet_peer_queue_outgoing_command (ENetPeer *, const ENetProtocol *, ENetPacket *, enet_uint32, enet_uint16);
-  extern ENetIncomingCommand * enet_peer_queue_incoming_command (ENetPeer *, const ENetProtocol *, const void *, size_t, enet_uint32, enet_uint32);
-  extern ENetAcknowledgement * enet_peer_queue_acknowledgement (ENetPeer *, const ENetProtocol *, enet_uint16);
-  extern void                  enet_peer_dispatch_incoming_unreliable_commands (ENetPeer *, ENetChannel *);
-  extern void                  enet_peer_dispatch_incoming_reliable_commands (ENetPeer *, ENetChannel *);
-  extern void                  enet_peer_on_connect (ENetPeer *);
-  extern void                  enet_peer_on_disconnect (ENetPeer *);
+  
+  @:native("::enet_peer_send")
+  static function peer_send (_peer:Pointer<ENetPeer>, _channelID:UInt8, _packet:Pointer<ENetPacket>):Int;
 
+  @:native("::enet_peer_receive")
+  static function peer_receive (_peer:Pointer<ENetPeer>, _channelID:Pointer<UInt8>):Pointer<ENetPacket>;
+
+  @:native("::enet_peer_ping")
+  static function peer_ping (_peer:Pointer<ENetPeer>):Void;
+
+  @:native("::enet_peer_ping_interval")
+  static function peer_ping_interval (_peer:Pointer<ENetPeer>, _pingInterval:UInt32):Void;
+
+  @:native("::enet_peer_timeout")
+  static function peer_timeout (_peer:Pointer<ENetPeer>, _timeoutLimit:UInt32, _timeoutMinimum:UInt32, _timeoutMaximum:UInt32):Void;
+
+  @:native("::enet_peer_reset")
+  static function peer_reset (_peer:Pointer<ENetPeer>):Void;
+
+  @:native("::enet_peer_disconnect")
+  static function peer_disconnect (_peer:Pointer<ENetPeer>, _data:UInt32):Void;
+
+  @:native("::enet_peer_disconnect_now")
+  static function peer_disconnect_now (_peer:Pointer<ENetPeer>, _data:UInt32):Void;
+
+  @:native("::enet_peer_disconnect_later")
+  static function peer_disconnect_later (_peer:Pointer<ENetPeer>, _data:UInt32):Void;
+
+  @:native("::enet_peer_throttle_configure")
+  static function peer_throttle_configure (_peer:Pointer<ENetPeer>, _interval:UInt32, _acceleration:UInt32, deceleration:UInt32):Void;
+
+  @:native("::enet_peer_throttle")
+  static function peer_throttle (_peer:Pointer<ENetPeer>, _roundTripTime:UInt32):Int;
+
+  @:native("::enet_peer_reset_queues")
+  static function peer_reset_queues (_peer:Pointer<ENetPeer>):Void;
+
+  @:native("::enet_peer_setup_outgoing_command")
+  static function peer_setup_outgoing_command (_peer:Pointer<ENetPeer>, _outgoingCommand:Pointer<ENetOutgoingCommand>):Void;
+
+  @:native("::enet_peer_queue_outgoing_command")
+  static function peer_queue_outgoing_command (_peer:Pointer<ENetPeer>, _command:ConstPointer<ENetProtocol>, _packet:Pointer<ENetPacket>, _offset:UInt32, _length:UInt16):Pointer<ENetOutgoingCommand>;
+
+  @:native("::enet_peer_queue_incoming_command")
+  static function peer_queue_incoming_command (_peer:Pointer<ENetPeer>, _command:ConstPointer<ENetProtocol>, _data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32, _fragmentCount:UInt32):Pointer<ENetIncomingCommand>;
+
+  @:native("::enet_peer_queue_acknowledgement")
+  static function peer_queue_acknowledgement (_peer:Pointer<ENetPeer>, _command:ConstPointer<ENetProtocol>, _sentTime:UInt16):Pointer<ENetAcknowledgement>;
+
+  @:native("::enet_peer_dispatch_incoming_unreliable_commands")
+  static function peer_dispatch_incoming_unreliable_commands (_peer:Pointer<ENetPeer>, _channel:Pointer<ENetChannel>):Void;
+
+  @:native("::enet_peer_dispatch_incoming_reliable_commands")
+  static function peer_dispatch_incoming_reliable_commands (_peer:Pointer<ENetPeer>, _channel:Pointer<ENetChannel>):Void;
+
+  @:native("::enet_peer_on_connect")
+  static function peer_on_connect (_peer:Pointer<ENetPeer>):Void;
+
+  @:native("::enet_peer_on_disconnect")
+  static function peer_on_disconnect (_peer:Pointer<ENetPeer>):Void;
+
+  /*
   ENET_API void * enet_range_coder_create (void);
   ENET_API void   enet_range_coder_destroy (void *);
   ENET_API size_t enet_range_coder_compress (void *, const ENetBuffer *, size_t, size_t, enet_uint8 *, size_t);
