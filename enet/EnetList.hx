@@ -48,8 +48,8 @@ extern class ENetList {
 	static function previous(_iterator:EnetListIterator):EnetListIterator;
 
 	@:native('::enet_list_front')
-	static function front(_list:Pointer<ENetList>):EnetListIterator;
+	static function front(_list:Pointer<ENetList>):Pointer<Void>;
 
 	@:native('::enet_list_back')
-	static function back(_list:Pointer<ENetList>)::EnetListIterator;
+	static function back(_list:Pointer<ENetList>):Pointer<Void>;
 }
