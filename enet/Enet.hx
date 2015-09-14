@@ -150,7 +150,7 @@ extern class Enet {
     @:native('::enet_initialize')
     static function initialize():Int;
 
-   	@:native('::enet_deinitialize')
+    @:native('::enet_deinitialize')
     static function deinitialize():Void;
 
         //inline functions can be used as wrappers
