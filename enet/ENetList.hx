@@ -9,7 +9,7 @@ extern class ENetListNode {
     var next:Pointer<ENetListNode>;   
     var previous:Pointer<ENetListNode>;
 }
-typedef EnetListIterator = Pointer<ENetListNode>;
+typedef ENetListIterator = Pointer<ENetListNode>;
 
 @:keep
 @:structAccess
@@ -21,31 +21,31 @@ extern class ENetList {
     static function clear(_list:Pointer<ENetList>):Void;
 
     @:native('::enet_list_insert')
-    static function insert(_it:EnetListIterator, Pointer<Void>):EnetListIterator;
+    static function insert(_it:ENetListIterator, Pointer<Void>):ENetListIterator;
 
     @:native('::enet_list_remove')
-    static function remove(_it:EnetListIterator):Pointer<Void>;
+    static function remove(_it:ENetListIterator):Pointer<Void>;
 
     @:native('::enet_list_move')
-    static function insert(_it:EnetListIterator, Pointer<Void>, Pointer<Void>):EnetListIterator;
+    static function insert(_it:ENetListIterator, Pointer<Void>, Pointer<Void>):ENetListIterator;
 
     @:native('::enet_list_size')
     static function size(_list:Pointer<ENetList>):Int32;
 
     @:native('::enet_list_begin')
-    static function begin(_list:Pointer<ENetList>):EnetListIterator;
+    static function begin(_list:Pointer<ENetList>):ENetListIterator;
 
     @:native('::enet_list_end')
-    static function end(_list:Pointer<ENetList>):EnetListIterator;  
+    static function end(_list:Pointer<ENetList>):ENetListIterator;  
 
     @:native('::enet_list_empty')
     static function empty(_list:Pointer<ENetList>):Bool;
 
     @:native('::enet_list_next')
-    static function next(_iterator:EnetListIterator):EnetListIterator;
+    static function next(_iterator:ENetListIterator):ENetListIterator;
     
     @:native('::enet_list_previous')
-    static function previous(_iterator:EnetListIterator):EnetListIterator;
+    static function previous(_iterator:ENetListIterator):ENetListIterator;
 
     @:native('::enet_list_front')
     static function front(_list:Pointer<ENetList>):Pointer<Void>;

@@ -141,7 +141,7 @@ typedef struct _ENetPeer
 @:include('linc_enet.h')
 @:build(linc.Linc.touch())
 @:build(linc.Linc.xml('enet'))
-extern class Enet {
+extern class ENet {
 
         //external native function definition
         //can be wrapped in linc::libname or call directly
@@ -159,4 +159,4 @@ extern class Enet {
     //     trace('empty project example');
     // }
 
-} //Enet
+} //ENet
