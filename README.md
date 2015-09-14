@@ -1,4 +1,18 @@
 # linc/enet
-Linc-powered wrapper for Enet (http://enet.bespin.org).
+Haxe/hxcpp @:native binding for ENET networking.
 
-For more information, see the [linc homepage](http://snowkit.github.io/linc/)
+This is a [linc](http://snowkit.github.io/linc/) library.
+
+---
+
+This library works with the Haxe cpp target only.
+
+---
+
+### Install
+
+`haxelib git linc_enet https://github.com/snowkit/linc_enet.git`
+
+### Example usage
+
+See test/Test.hx
