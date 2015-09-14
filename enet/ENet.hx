@@ -591,21 +591,47 @@ extern class ENet {
   @:native("::enet_crc32")
   static function crc32 (_buffers:ConstPointer<ENetBuffer>, _bufferCount:Int):UInt32;
   
-  /*                
-  ENET_API ENetHost * enet_host_create (const ENetAddress *, size_t, size_t, enet_uint32, enet_uint32);
-  ENET_API void       enet_host_destroy (ENetHost *);
-  ENET_API ENetPeer * enet_host_connect (ENetHost *, const ENetAddress *, size_t, enet_uint32);
-  ENET_API int        enet_host_check_events (ENetHost *, ENetEvent *);
-  ENET_API int        enet_host_service (ENetHost *, ENetEvent *, enet_uint32);
-  ENET_API void       enet_host_flush (ENetHost *);
-  ENET_API void       enet_host_broadcast (ENetHost *, enet_uint8, ENetPacket *);
-  ENET_API void       enet_host_compress (ENetHost *, const ENetCompressor *);
-  ENET_API int        enet_host_compress_with_range_coder (ENetHost * host);
-  ENET_API void       enet_host_channel_limit (ENetHost *, size_t);
-  ENET_API void       enet_host_bandwidth_limit (ENetHost *, enet_uint32, enet_uint32);
-  extern   void       enet_host_bandwidth_throttle (ENetHost *);
-  extern  enet_uint32 enet_host_random_seed (void);
+  
+  @:native("::enet_host_create")
+  static function host_create (_address:ConstPointer<ENetAddress>, _peerCount:Int, _channelLimit:Int, _incomingBandwidth:UInt32, _outgoingBandwidth:UInt32):Pointer<ENetHost>;
 
+  @:native("::enet_host_destroy")
+  static function host_destroy (_host:Pointer<ENetHost>):Void;
+
+  @:native("::enet_host_connect")
+  static function host_connect (_host:Pointer<ENetHost>, _address:ConstPointer<ENetAddress>, _channelCount:Int, _data:UInt32):Pointer<ENetPeer>;
+
+  @:native("::enet_host_check_events")
+  static function host_check_events (_host:Pointer<ENetHost>, _event:Pointer<ENetEvent>):Int;
+
+  @:native("::enet_host_service")
+  static function host_service (_host:Pointer<ENetHost>, _event:Pointer<ENetEvent>, _timeout:UInt32):Int;
+
+  @:native("::enet_host_flush")
+  static function host_flush (_host:Pointer<ENetHost>):Void;
+
+  @:native("::enet_host_broadcast")
+  static function host_broadcast (_host:Pointer<ENetHost>, _channelID:UInt8, _packet:Pointer<ENetPacket>):Void;
+
+  @:native("::enet_host_compress")
+  static function host_compress (_host:Pointer<ENetHost>, _compressor:ConstPointer<ENetCompressor>):Void;
+
+  @:native("::enet_host_compress_with_range_coder")
+  static function host_compress_with_range_coder (_host:Pointer<ENetHost>):Int;
+
+  @:native("::enet_host_channel_limit")
+  static function host_channel_limit (_host:Pointer<ENetHost>, _channelLimit:Int):Void;
+
+  @:native("::enet_host_bandwidth_limit")
+  static function host_bandwidth_limit (_host:Pointer<ENetHost>, _incomingBandwidth:UInt32, _outgoingBandwidth:UInt32):Void;
+
+  @:native("::enet_host_bandwidth_throttle")
+  static function host_bandwidth_throttle (_host:Pointer<ENetHost>):Void;
+
+  @:native("::enet_host_random_seed")
+  static function host_random_seed():UInt32;
+
+  /*
   ENET_API int                 enet_peer_send (ENetPeer *, enet_uint8, ENetPacket *);
   ENET_API ENetPacket *        enet_peer_receive (ENetPeer *, enet_uint8 * channelID);
   ENET_API void                enet_peer_ping (ENetPeer *);
