@@ -692,15 +692,20 @@ extern class ENet {
   @:native("::enet_peer_on_disconnect")
   static function peer_on_disconnect (_peer:Pointer<ENetPeer>):Void;
 
-  /*
-  ENET_API void * enet_range_coder_create (void);
-  ENET_API void   enet_range_coder_destroy (void *);
-  ENET_API size_t enet_range_coder_compress (void *, const ENetBuffer *, size_t, size_t, enet_uint8 *, size_t);
-  ENET_API size_t enet_range_coder_decompress (void *, const enet_uint8 *, size_t, enet_uint8 *, size_t);
-     
-  extern size_t enet_protocol_command_size (enet_uint8);
-  */
 
+  @:native("::enet_range_coder_create")
+  static function range_coder_create ():Pointer<Void>;
 
+  @:native("::enet_range_coder_destroy")
+  static function range_coder_destroy (_context:Pointer<Void>):Void;
+
+  @:native("::enet_range_coder_compress")
+  static function range_coder_compress (_context:Pointer<Void>, _inBuffers:ConstPointer<ENetBuffer>, inBufferCount:Int, _inLimit:Int, _outData:Pointer<UInt8>, _outLimit:Int):Int;
+
+  @:native("::enet_range_coder_decompress")
+  static function range_coder_decompress (_context:Pointer<Void>, _inData:ConstPointer<UInt8>, _inLimit:Int, _outData:Pointer<UInt8>, _outLimit:Int):Int;
+  
+  @:native("::enet_protocol_command_size")
+  static function protocol_command_size (_commandNumber:UInt8):Int;
 
 } //ENet
