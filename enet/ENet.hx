@@ -10,6 +10,12 @@ import cpp.UInt32;
 import enet.ENetList;
 import enet.ENetProtocol;
 
+@:keep
+@:include('linc_enet.h') @:native("::ENetSocket")
+extern class ENetSocket {}
+
+typedef ENetVersion = UInt32;
+
 @:enum
 abstract ENetSocketType(Int)
 from Int to Int {
@@ -268,6 +274,29 @@ extern class ENetPeer {
   var totalWaitingData:Int;
 }
 
+/** An ENet packet compressor for compressing UDP packets before socket sends or receives.
+ */
+@:keep
+@:structAccess
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetCompressor>")
+extern class ENetCompressor { // TODO:
+  /** Context data for the compressor. Must be non-NULL. */
+  //void * context;
+  /** Compresses from inBuffers[0:inBufferCount-1], containing inLimit bytes, to outData, outputting at most outLimit bytes. Should return 0 on failure. */
+  //size_t (ENET_CALLBACK * compress) (void * context, const ENetBuffer * inBuffers, size_t inBufferCount, size_t inLimit, enet_uint8 * outData, size_t outLimit);
+  /** Decompresses from inData, containing inLimit bytes, to outData, outputting at most outLimit bytes. Should return 0 on failure. */
+  //size_t (ENET_CALLBACK * decompress) (void * context, const enet_uint8 * inData, size_t inLimit, enet_uint8 * outData, size_t outLimit);
+  /** Destroys the context when compression is disabled or the host is destroyed. May be NULL. */
+  //void (ENET_CALLBACK * destroy) (void * context);
+}
+
+/** Callback that computes the checksum of the data held in buffers[0:bufferCount-1] */
+//typedef enet_uint32 (ENET_CALLBACK * ENetChecksumCallback) (const ENetBuffer * buffers, size_t bufferCount);
+
+/** Callback for intercepting received raw UDP packets. Should return 1 to intercept, 0 to ignore, or -1 to propagate an error. */
+//typedef int (ENET_CALLBACK * ENetInterceptCallback) (struct _ENetHost * host, struct _ENetEvent * event);
+
+
 /** An ENet host for communicating with peers.
   *
   * No fields should be modified unless otherwise stated.
@@ -288,8 +317,89 @@ extern class ENetPeer {
 @:structAccess
 @:include('linc_enet.h') @:native("::cpp::Struct<ENetHost>")
 extern class ENetHost {
-  // ..
+  var socket:ENetSocket;
+  var address:ENetAddress;            /**< Internet address of the host */
+  var incomingBandwidth:UInt32;       /**< downstream bandwidth of the host */
+  var outgoingBandwidth:UInt32;       /**< upstream bandwidth of the host */
+  var bandwidthThrottleEpoch:UInt32;
+  var mtu:UInt32;
+  var randomSeed:UInt32;
+  var recalculateBandwidthLimits:Int;
+  var peers:Pointer<ENetPeer>;        /**< array of peers allocated for this host */
+  var peerCount:Int;                  /**< number of peers allocated for this host */
+  var channelLimit:Int;               /**< maximum number of channels allowed for connected peers */
+  var serviceTime:UInt32;
+  var dispatchQueue:ENetList;
+  var continueSending:Int;
+  var packetSize:Int;
+  var headerFlags:UInt16;
+  //ENetProtocol         commands [ENET_PROTOCOL_MAXIMUM_PACKET_COMMANDS];
+  var commandCount:Int;
+  //ENetBuffer           buffers [ENET_BUFFER_MAXIMUM];
+  var bufferCount:Int;
+  //ENetChecksumCallback checksum;    /**< callback the user can set to enable packet checksums for this host */
+  var compressor:ENetCompressor;
+  //enet_uint8           packetData [2][ENET_PROTOCOL_MAXIMUM_MTU];
+  var receivedAddress:ENetAddress;
+  var receivedData:Pointer<UInt8>;
+  var receivedDataLength:Int;
+  var totalSentData:UInt32;           /**< total data sent, user should reset to 0 as needed to prevent overflow */
+  var totalSentPackets:UInt32;        /**< total UDP packets sent, user should reset to 0 as needed to prevent overflow */
+  var totalReceivedData:UInt32;       /**< total data received, user should reset to 0 as needed to prevent overflow */
+  var totalReceivedPackets:UInt32;    /**< total UDP packets received, user should reset to 0 as needed to prevent overflow */
+  //ENetInterceptCallback intercept;  /**< callback the user can set to intercept received raw UDP packets */
+  var connectedPeers:Int;
+  var bandwidthLimitedPeers:Int;
+  var duplicatePeers:Int;             /**< optional number of allowed peers from duplicate IPs, defaults to ENET_PROTOCOL_MAXIMUM_PEER_ID */
+  var maximumPacketSize:Int;          /**< the maximum allowable packet size that may be sent or received on a peer */
+  var maximumWaitingData:Int;         /**< the maximum aggregate amount of buffer space a peer may use waiting for packets to be delivered */
 }
+
+@:enum
+abstract ENetEventType(Int)
+from Int to Int {
+  /** no event occurred within the specified time limit */
+  var ENET_EVENT_TYPE_NONE       = 0;  
+
+  /** a connection request initiated by enet_host_connect has completed.  
+   * The peer field contains the peer which successfully connected. 
+   */
+  var ENET_EVENT_TYPE_CONNECT    = 1;  
+
+  /** a peer has disconnected.  This event is generated on a successful 
+   * completion of a disconnect initiated by enet_pper_disconnect, if 
+   * a peer has timed out, or if a connection request intialized by 
+   * enet_host_connect has timed out.  The peer field contains the peer 
+   * which disconnected. The data field contains user supplied data 
+   * describing the disconnection, or 0, if none is available.
+   */
+  var ENET_EVENT_TYPE_DISCONNECT = 2;  
+
+  /** a packet has been received from a peer.  The peer field specifies the
+   * peer which sent the packet.  The channelID field specifies the channel
+   * number upon which the packet was received.  The packet field contains
+   * the packet that was received; this packet must be destroyed with
+   * enet_packet_destroy after use.
+   */
+  var ENET_EVENT_TYPE_RECEIVE    = 3;
+} // ENetEventType
+
+/**
+ * An ENet event as returned by enet_host_service().
+   
+   @sa enet_host_service
+ */
+@:keep
+@:structAccess
+@:include('linc_enet.h') @:native("::cpp::Struct<ENetEvent>")
+extern class ENetEvent {
+  var type:ENetEventType;         /**< type of the event */
+  var peer:Pointer<ENetPeer>;     /**< peer that generated a connect, disconnect or receive event */
+  var channelID:UInt8;            /**< channel on the peer that generated the event, if appropriate */
+  var data:UInt32;                /**< data associated with the event, if appropriate */
+  var packet:Pointer<ENetPacket>; /**< packet associated with the event, if appropriate */
+}
+
 
 @:keep
 @:include('linc_enet.h')
@@ -297,48 +407,179 @@ extern class ENetHost {
 @:build(linc.Linc.xml('enet'))
 extern class ENet {
 
-    inline static var ENET_HOST_ANY:Int = 0;
-    //inline static var ENET_HOST_BROADCAST:Int = 0xFFFFFFFFU;
-    inline static var ENET_PORT_ANY:Int = 0;
+  inline static var ENET_HOST_ANY:Int = 0;
+  //inline static var ENET_HOST_BROADCAST:Int = 0xFFFFFFFFU;
+  inline static var ENET_PORT_ANY:Int = 0;
 
-    inline static var ENET_HOST_RECEIVE_BUFFER_SIZE:Int          = 256 * 1024;
-    inline static var ENET_HOST_SEND_BUFFER_SIZE:Int             = 256 * 1024;
-    inline static var ENET_HOST_BANDWIDTH_THROTTLE_INTERVAL:Int  = 1000;
-    inline static var ENET_HOST_DEFAULT_MTU:Int                  = 1400;
-    inline static var ENET_HOST_DEFAULT_MAXIMUM_PACKET_SIZE:Int  = 32 * 1024 * 1024;
-    inline static var ENET_HOST_DEFAULT_MAXIMUM_WAITING_DATA:Int = 32 * 1024 * 1024;
+  inline static var ENET_HOST_RECEIVE_BUFFER_SIZE:Int          = 256 * 1024;
+  inline static var ENET_HOST_SEND_BUFFER_SIZE:Int             = 256 * 1024;
+  inline static var ENET_HOST_BANDWIDTH_THROTTLE_INTERVAL:Int  = 1000;
+  inline static var ENET_HOST_DEFAULT_MTU:Int                  = 1400;
+  inline static var ENET_HOST_DEFAULT_MAXIMUM_PACKET_SIZE:Int  = 32 * 1024 * 1024;
+  inline static var ENET_HOST_DEFAULT_MAXIMUM_WAITING_DATA:Int = 32 * 1024 * 1024;
 
-    inline static var ENET_PEER_DEFAULT_ROUND_TRIP_TIME:Int      = 500;
-    inline static var ENET_PEER_DEFAULT_PACKET_THROTTLE:Int      = 32;
-    inline static var ENET_PEER_PACKET_THROTTLE_SCALE:Int        = 32;
-    inline static var ENET_PEER_PACKET_THROTTLE_COUNTER:Int      = 7; 
-    inline static var ENET_PEER_PACKET_THROTTLE_ACCELERATION:Int = 2;
-    inline static var ENET_PEER_PACKET_THROTTLE_DECELERATION:Int = 2;
-    inline static var ENET_PEER_PACKET_THROTTLE_INTERVAL:Int     = 5000;
-    inline static var ENET_PEER_PACKET_LOSS_SCALE:Int            = (1 << 16);
-    inline static var ENET_PEER_PACKET_LOSS_INTERVAL:Int         = 10000;
-    inline static var ENET_PEER_WINDOW_SIZE_SCALE:Int            = 64 * 1024;
-    inline static var ENET_PEER_TIMEOUT_LIMIT:Int                = 32;
-    inline static var ENET_PEER_TIMEOUT_MINIMUM:Int              = 5000;
-    inline static var ENET_PEER_TIMEOUT_MAXIMUM:Int              = 30000;
-    inline static var ENET_PEER_PING_INTERVAL:Int                = 500;
-    inline static var ENET_PEER_UNSEQUENCED_WINDOWS:Int          = 64;
-    inline static var ENET_PEER_UNSEQUENCED_WINDOW_SIZE:Int      = 1024;
-    inline static var ENET_PEER_FREE_UNSEQUENCED_WINDOWS:Int     = 32;
-    inline static var ENET_PEER_RELIABLE_WINDOWS:Int             = 16;
-    inline static var ENET_PEER_RELIABLE_WINDOW_SIZE:Int         = 0x1000;
-    inline static var ENET_PEER_FREE_RELIABLE_WINDOWS:Int        = 8;
+  inline static var ENET_PEER_DEFAULT_ROUND_TRIP_TIME:Int      = 500;
+  inline static var ENET_PEER_DEFAULT_PACKET_THROTTLE:Int      = 32;
+  inline static var ENET_PEER_PACKET_THROTTLE_SCALE:Int        = 32;
+  inline static var ENET_PEER_PACKET_THROTTLE_COUNTER:Int      = 7; 
+  inline static var ENET_PEER_PACKET_THROTTLE_ACCELERATION:Int = 2;
+  inline static var ENET_PEER_PACKET_THROTTLE_DECELERATION:Int = 2;
+  inline static var ENET_PEER_PACKET_THROTTLE_INTERVAL:Int     = 5000;
+  inline static var ENET_PEER_PACKET_LOSS_SCALE:Int            = (1 << 16);
+  inline static var ENET_PEER_PACKET_LOSS_INTERVAL:Int         = 10000;
+  inline static var ENET_PEER_WINDOW_SIZE_SCALE:Int            = 64 * 1024;
+  inline static var ENET_PEER_TIMEOUT_LIMIT:Int                = 32;
+  inline static var ENET_PEER_TIMEOUT_MINIMUM:Int              = 5000;
+  inline static var ENET_PEER_TIMEOUT_MAXIMUM:Int              = 30000;
+  inline static var ENET_PEER_PING_INTERVAL:Int                = 500;
+  inline static var ENET_PEER_UNSEQUENCED_WINDOWS:Int          = 64;
+  inline static var ENET_PEER_UNSEQUENCED_WINDOW_SIZE:Int      = 1024;
+  inline static var ENET_PEER_FREE_UNSEQUENCED_WINDOWS:Int     = 32;
+  inline static var ENET_PEER_RELIABLE_WINDOWS:Int             = 16;
+  inline static var ENET_PEER_RELIABLE_WINDOW_SIZE:Int         = 0x1000;
+  inline static var ENET_PEER_FREE_RELIABLE_WINDOWS:Int        = 8;
 
-    @:native('::enet_initialize')
-    static function initialize():Int;
+  ////////////////////////////////////////////////////////////////////////////////
+  // Global functions
 
-    @:native('::enet_deinitialize')
-    static function deinitialize():Void;
+  /** 
+    Initializes ENet globally.  Must be called prior to using any functions in
+    ENet.
+    @returns 0 on success, < 0 on failure
+  */
+  @:native('::enet_initialize')
+  static function initialize():Int;
 
-        //inline functions can be used as wrappers
+  /** 
+    Shuts down ENet globally.  Should be called when a program that has
+    initialized ENet exits.
+  */
+  @:native('::enet_deinitialize')
+  static function deinitialize():Void;
 
-    // static inline function example() : Void {
-    //     trace('empty project example');
-    // }
+  /**
+    Gives the linked version of the ENet library.
+    @returns the version number 
+  */
+  @:native('::enet_linked_version')
+  static function linked_version():ENetVersion;
+
+  /**
+    Returns the wall-time in milliseconds.  Its initial value is unspecified
+    unless otherwise set.
+  */
+  @:native('::enet_time_get')
+  static function time_get():UInt32;
+
+  /**
+    Sets the current wall-time in milliseconds.
+  */
+  @:native('::enet_time_set')
+  static function time_set(_t:UInt32):Void;
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Socket functions
+
+  /*
+  ENET_API ENetSocket enet_socket_create (ENetSocketType);
+  ENET_API int        enet_socket_bind (ENetSocket, const ENetAddress *);
+  ENET_API int        enet_socket_get_address (ENetSocket, ENetAddress *);
+  ENET_API int        enet_socket_listen (ENetSocket, int);
+  ENET_API ENetSocket enet_socket_accept (ENetSocket, ENetAddress *);
+  ENET_API int        enet_socket_connect (ENetSocket, const ENetAddress *);
+  ENET_API int        enet_socket_send (ENetSocket, const ENetAddress *, const ENetBuffer *, size_t);
+  ENET_API int        enet_socket_receive (ENetSocket, ENetAddress *, ENetBuffer *, size_t);
+  ENET_API int        enet_socket_wait (ENetSocket, enet_uint32 *, enet_uint32);
+  ENET_API int        enet_socket_set_option (ENetSocket, ENetSocketOption, int);
+  ENET_API int        enet_socket_get_option (ENetSocket, ENetSocketOption, int *);
+  ENET_API int        enet_socket_shutdown (ENetSocket, ENetSocketShutdown);
+  ENET_API void       enet_socket_destroy (ENetSocket);
+  ENET_API int        enet_socketset_select (ENetSocket, ENetSocketSet *, ENetSocketSet *, enet_uint32);
+  */
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // Address functions
+
+  /** Attempts to resolve the host named by the parameter hostName and sets
+      the host field in the address parameter if successful.
+      @param address destination to store resolved address
+      @param hostName host name to lookup
+      @retval 0 on success
+      @retval < 0 on failure
+      @returns the address of the given hostName in address on success
+  */
+  //ENET_API int enet_address_set_host (ENetAddress * address, const char * hostName);
+
+  /** Gives the printable form of the IP address specified in the address parameter.
+      @param address    address printed
+      @param hostName   destination for name, must not be NULL
+      @param nameLength maximum length of hostName.
+      @returns the null-terminated name of the host in hostName on success
+      @retval 0 on success
+      @retval < 0 on failure
+  */
+  //ENET_API int enet_address_get_host_ip (const ENetAddress * address, char * hostName, size_t nameLength);
+
+  /** Attempts to do a reverse lookup of the host field in the address parameter.
+      @param address    address used for reverse lookup
+      @param hostName   destination for name, must not be NULL
+      @param nameLength maximum length of hostName.
+      @returns the null-terminated name of the host in hostName on success
+      @retval 0 on success
+      @retval < 0 on failure
+  */
+  //ENET_API int enet_address_get_host (const ENetAddress * address, char * hostName, size_t nameLength);
+
+
+  /*
+  ENET_API ENetPacket * enet_packet_create (const void *, size_t, enet_uint32);
+  ENET_API void         enet_packet_destroy (ENetPacket *);
+  ENET_API int          enet_packet_resize  (ENetPacket *, size_t);
+  ENET_API enet_uint32  enet_crc32 (const ENetBuffer *, size_t);
+                  
+  ENET_API ENetHost * enet_host_create (const ENetAddress *, size_t, size_t, enet_uint32, enet_uint32);
+  ENET_API void       enet_host_destroy (ENetHost *);
+  ENET_API ENetPeer * enet_host_connect (ENetHost *, const ENetAddress *, size_t, enet_uint32);
+  ENET_API int        enet_host_check_events (ENetHost *, ENetEvent *);
+  ENET_API int        enet_host_service (ENetHost *, ENetEvent *, enet_uint32);
+  ENET_API void       enet_host_flush (ENetHost *);
+  ENET_API void       enet_host_broadcast (ENetHost *, enet_uint8, ENetPacket *);
+  ENET_API void       enet_host_compress (ENetHost *, const ENetCompressor *);
+  ENET_API int        enet_host_compress_with_range_coder (ENetHost * host);
+  ENET_API void       enet_host_channel_limit (ENetHost *, size_t);
+  ENET_API void       enet_host_bandwidth_limit (ENetHost *, enet_uint32, enet_uint32);
+  extern   void       enet_host_bandwidth_throttle (ENetHost *);
+  extern  enet_uint32 enet_host_random_seed (void);
+
+  ENET_API int                 enet_peer_send (ENetPeer *, enet_uint8, ENetPacket *);
+  ENET_API ENetPacket *        enet_peer_receive (ENetPeer *, enet_uint8 * channelID);
+  ENET_API void                enet_peer_ping (ENetPeer *);
+  ENET_API void                enet_peer_ping_interval (ENetPeer *, enet_uint32);
+  ENET_API void                enet_peer_timeout (ENetPeer *, enet_uint32, enet_uint32, enet_uint32);
+  ENET_API void                enet_peer_reset (ENetPeer *);
+  ENET_API void                enet_peer_disconnect (ENetPeer *, enet_uint32);
+  ENET_API void                enet_peer_disconnect_now (ENetPeer *, enet_uint32);
+  ENET_API void                enet_peer_disconnect_later (ENetPeer *, enet_uint32);
+  ENET_API void                enet_peer_throttle_configure (ENetPeer *, enet_uint32, enet_uint32, enet_uint32);
+  extern int                   enet_peer_throttle (ENetPeer *, enet_uint32);
+  extern void                  enet_peer_reset_queues (ENetPeer *);
+  extern void                  enet_peer_setup_outgoing_command (ENetPeer *, ENetOutgoingCommand *);
+  extern ENetOutgoingCommand * enet_peer_queue_outgoing_command (ENetPeer *, const ENetProtocol *, ENetPacket *, enet_uint32, enet_uint16);
+  extern ENetIncomingCommand * enet_peer_queue_incoming_command (ENetPeer *, const ENetProtocol *, const void *, size_t, enet_uint32, enet_uint32);
+  extern ENetAcknowledgement * enet_peer_queue_acknowledgement (ENetPeer *, const ENetProtocol *, enet_uint16);
+  extern void                  enet_peer_dispatch_incoming_unreliable_commands (ENetPeer *, ENetChannel *);
+  extern void                  enet_peer_dispatch_incoming_reliable_commands (ENetPeer *, ENetChannel *);
+  extern void                  enet_peer_on_connect (ENetPeer *);
+  extern void                  enet_peer_on_disconnect (ENetPeer *);
+
+  ENET_API void * enet_range_coder_create (void);
+  ENET_API void   enet_range_coder_destroy (void *);
+  ENET_API size_t enet_range_coder_compress (void *, const ENetBuffer *, size_t, size_t, enet_uint8 *, size_t);
+  ENET_API size_t enet_range_coder_decompress (void *, const enet_uint8 *, size_t, enet_uint8 *, size_t);
+     
+  extern size_t enet_protocol_command_size (enet_uint8);
+  */
+
+
 
 } //ENet
