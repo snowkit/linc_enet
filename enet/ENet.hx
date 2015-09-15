@@ -155,7 +155,7 @@ extern class Native_ENetPacket {
 
   inline function getDataBytes():haxe.io.Bytes {
     var bdata:Array<cpp.Char> = [];
-    cpp.NativeArray.setData(bdata, untyped __cpp__("(::cpp::Pointer< ::cpp::UInt8 >){0}"), dataLength);
+    cpp.NativeArray.setData(bdata, untyped __cpp__("(::cpp::Pointer< ::cpp::UInt8 >){0}", data), dataLength);
     return haxe.io.Bytes.ofData(cast bdata);
   }
 }
