@@ -251,6 +251,7 @@ extern class ENetChannel extends ENetChannelRef {}
  */
 @:noCompletion
 @:structAccess
+@:unreflective
 @:include('linc_enet.h') @:native("::ENetPeer")
 extern private class Native_ENetPeer {
   var dispatchList:Native_ENetListNode;
@@ -315,10 +316,13 @@ extern private class Native_ENetPeer {
   var eventData:UInt32;
   var totalWaitingData:Int;
 }
+
+@:unreflective
 @:include('linc_enet.h') @:native("::cpp::Reference<ENetPeer>")
 extern class ENetPeerRef extends Native_ENetPeer {}
 typedef ENetPeer = ENetPeerRef;
 /*
+@:unreflective
 @:include('linc_enet.h') @:native("::cpp::Struct<ENetPeer>")
 extern class ENetPeer extends ENetPeerRef {}
 */

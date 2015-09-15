@@ -30,13 +30,16 @@ class Server {
     		if (eventStatus > 0) {
     			switch(event.type) {
     				case ENetEventType.ENET_EVENT_TYPE_CONNECT:
-    					trace('Server got a new connection from $event.peer.address.host');
+                        var p = event.peer; var a = p.address; var h = a.host;
+    					trace('Server got a new connection from $h');
     				case ENetEventType.ENET_EVENT_TYPE_RECEIVE:
-    					trace('Server received message from client: $event.packet.data');
+                        var p = event.packet; var d = p.data;
+    					trace('Server received message from client: $d');
     					ENet.host_broadcast(server, 0, event.packet);
     				case ENetEventType.ENET_EVENT_TYPE_DISCONNECT:
-    					trace('$event.peer.data disconnected');
-    					//event.peer.data = null;
+                        var p = event.peer; var a = p.address; var h = a.host;
+    					trace('$h disconnected');
+    					p.data = untyped 0;
     				default:
     			}
     		}

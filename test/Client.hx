@@ -43,7 +43,7 @@ class Client {
             if (eventStatus > 0) {
                 switch(event.type) {
                     case ENetEventType.ENET_EVENT_TYPE_CONNECT:
-                        trace('Client got a new connection from $event.peer.address.host');
+                        trace('Client got a new connection from $(event.peer.address.host)');
                     case ENetEventType.ENET_EVENT_TYPE_RECEIVE:
                         trace('Client received message from server: $event.packet.data');
                         ENet.packet_destroy(event.packet);
