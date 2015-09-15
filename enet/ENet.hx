@@ -154,9 +154,9 @@ extern class Native_ENetPacket {
   var userData:Pointer<Void>;
 
   inline function getDataBytes():haxe.io.Bytes {
-    var bdata:Array<cpp.Char> = [];
-    cpp.NativeArray.setData(bdata, untyped __cpp__("(::cpp::Pointer< ::cpp::UInt8 >){0}", data), dataLength);
-    return haxe.io.Bytes.ofData(cast bdata);
+    var bdata:haxe.io.BytesData = [];
+    cpp.NativeArray.setData(bdata, cast data, dataLength);
+    return haxe.io.Bytes.ofData(bdata);
   }
 }
 @:include('linc_enet.h') @:native("::cpp::Reference<ENetPacket>")
