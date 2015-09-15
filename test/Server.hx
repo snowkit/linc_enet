@@ -13,11 +13,11 @@ class Server {
     		return;
     	}
 
-    	var adr:ENetAddress = null;
+        var adr:ENetAddress = null;
     	adr.host = ENet.ENET_HOST_ANY;
     	adr.port = 1234;
 
-    	var server:ENetHost = ENet.host_create(cpp.Pointer.fromHandle(adr), 32, 2, 0, 0);
+    	var server:ENetHost = ENet.host_create(cast adr, 32, 2, 0, 0);
     	if (server == null) {
     		trace("An error occurred while trying to create an ENet server host.");
     		ENet.deinitialize();
@@ -25,7 +25,7 @@ class Server {
     	}
 
     	while(true) {
-    		eventStatus = ENet.host_service(server, cpp.Pointer.fromHandle(event), 1000);
+    		eventStatus = ENet.host_service(server, event, 500);
     		trace(eventStatus);
     		if (eventStatus > 0) {
     			switch(event.type) {
@@ -42,7 +42,7 @@ class Server {
     		}
     	}    	
 
-    	ENet.host_destroy(server);
+    	ENet.host_destroy(cast server);
 
     	ENet.deinitialize();
     }

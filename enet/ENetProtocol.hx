@@ -194,3 +194,5 @@ extern class ENetProtocol {
     var bandwidthLimit:ENetProtocolBandwidthLimit;
     var throttleConfigure:ENetProtocolThrottleConfigure;
 }
+@:include('linc_enet.h') @:native("::cpp::Reference<ENetProtocol>")
+extern class ENetProtocolRef extends ENetProtocol {}

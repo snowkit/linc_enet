@@ -25,10 +25,10 @@ class Client {
     		return;
     	}
 
-    	trace(ENet.address_set_host(cpp.Pointer.fromHandle(adr), "localhost"));
+    	trace(ENet.address_set_host(cast adr, "localhost"));
         adr.port = 1234;
 
-        peer = ENet.host_connect(client, cpp.Pointer.fromHandle(adr), 2, 0);
+        peer = ENet.host_connect(client, cast adr, 2, 0);
 
         if (peer == null) {
             trace("No available peers for initializing an ENet connection");
@@ -36,24 +36,9 @@ class Client {
             return;
         }
 
-        if (ENet.host_service (client, cpp.Pointer.fromHandle(event), 5000) > 0 &&
-            event.type == ENetEventType.ENET_EVENT_TYPE_CONNECT) {
-            trace("Connection to server succeeded.");
-        }
-        else
-        {
-            /* Either the 5 seconds are up or a disconnect event was */
-            /* received. Reset the peer in the event the 5 seconds   */
-            /* had run out without any significant event.            */
-            ENet.peer_reset(peer);
-            trace("Connection to server failed.");
-            ENet.host_destroy(client);
-            ENet.deinitialize();
-            return;
-        }
-
         while(true) {
-            eventStatus = ENet.host_service(client, cpp.Pointer.fromHandle(event), 0);
+            eventStatus = ENet.host_service(client, event, 500);
+            trace("state: " + peer.state);
             trace(eventStatus);
             if (eventStatus > 0) {
                 switch(event.type) {
@@ -69,9 +54,9 @@ class Client {
                 }
             }
 
-            msg = "" + Std.random(100);
-            var packet = ENet.packet_create(cast msg, msg.length+1, ENetPacketFlag.ENET_PACKET_FLAG_RELIABLE);
-            trace(ENet.peer_send(peer, 0, packet));
+            //msg = "" + Std.random(100);
+            //var packet = ENet.packet_create(cast 0, 0, ENetPacketFlag.ENET_PACKET_FLAG_RELIABLE);
+            //trace(ENet.peer_send(peer, 0, packet));
         }
 
     	ENet.host_destroy(client);
