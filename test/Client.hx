@@ -37,9 +37,9 @@ class Client {
         }
 
         while(true) {
-            eventStatus = ENet.host_service(client, event, 500);
-            trace("state: " + peer.state);
-            trace(eventStatus);
+            eventStatus = ENet.host_service(client, cast event, 50);
+            //trace("state: " + peer.state);
+            //trace(eventStatus);
             if (eventStatus > 0) {
                 switch(event.type) {
                     case ENetEventType.ENET_EVENT_TYPE_CONNECT:

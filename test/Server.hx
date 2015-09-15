@@ -25,8 +25,8 @@ class Server {
     	}
 
     	while(true) {
-    		eventStatus = ENet.host_service(server, event, 500);
-    		trace(eventStatus);
+    		eventStatus = ENet.host_service(server, cast event, 50);
+    		//trace(eventStatus);
     		if (eventStatus > 0) {
     			switch(event.type) {
     				case ENetEventType.ENET_EVENT_TYPE_CONNECT:

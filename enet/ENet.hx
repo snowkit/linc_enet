@@ -460,11 +460,9 @@ extern class Native_ENetEvent {
 }
 @:include('linc_enet.h') @:native("::cpp::Reference<ENetEvent>")
 extern class ENetEventRef extends Native_ENetEvent {}
-typedef ENetEvent = ENetEventRef;
-/*
 @:include('linc_enet.h') @:native("::cpp::Struct<ENetEvent>")
 extern class ENetEvent extends ENetEventRef {}
-*/
+
 
 @:keep
 @:include('linc_enet.h')
