@@ -152,6 +152,12 @@ extern class Native_ENetPacket {
   var dataLength:Int32;
   //var ENetPacketFreeCallback   freeCallback;  // TODO: callbacks 
   var userData:Pointer<Void>;
+
+  inline function getDataBytes():haxe.io.Bytes {
+    var bdata:Array<cpp.Char> = [];
+    cpp.NativeArray.setData(bdata, untyped __cpp__("(::cpp::Pointer< ::cpp::UInt8 >){0}"), dataLength);
+    return haxe.io.Bytes.ofData(cast bdata);
+  }
 }
 @:include('linc_enet.h') @:native("::cpp::Reference<ENetPacket>")
 extern class ENetPacketRef extends Native_ENetPacket {}
@@ -628,7 +634,12 @@ extern class ENet {
 
   
   @:native("::enet_packet_create")
-  static function packet_create (_data:ConstPointer<Void>, _dataLength:Int, _flags:UInt32):ENetPacketRef;
+  private static function _packet_create (_data:cpp.RawConstPointer<Void>, _dataLength:Int, _flags:UInt32):ENetPacketRef;
+  inline static function packet_create(_data:haxe.io.BytesData, _dataLength:Int, _flags:UInt32):ENetPacketRef {
+    var ab = cpp.NativeArray.getBase(_data);
+    var ptr:cpp.RawPointer<cpp.Char> = untyped __cpp__('{0}->getBase()', ab); // hxcpp tries to resolve through reflection?!? WHY? omg, just force it!
+    return _packet_create(cast ptr, _dataLength, _flags);
+  }
 
   @:native("::enet_packet_destroy")
   static function packet_destroy (_packet:ENetPacketRef):Void;

@@ -1,5 +1,6 @@
 
 import enet.ENet;
+import haxe.io.Bytes;
 
 class Client {
         
@@ -12,20 +13,20 @@ class Client {
         var eventStatus = 1;
 
         var msg = "";
-    	
-    	if (ENet.initialize() != 0) {
-    		trace("An error occurred while initializing ENet.");
-    		return;
-    	}    	
+        
+        if (ENet.initialize() != 0) {
+            trace("An error occurred while initializing ENet.");
+            return;
+        }       
 
-    	client = ENet.host_create(untyped 0, 1, 2, Std.int(57600 / 8), Std.int(14400 / 8));
-    	if (client == null) {
-    		trace("An error occurred while trying to create an ENet client.");
-    		ENet.deinitialize();
-    		return;
-    	}
+        client = ENet.host_create(untyped 0, 1, 2, Std.int(57600 / 8), Std.int(14400 / 8));
+        if (client == null) {
+            trace("An error occurred while trying to create an ENet client.");
+            ENet.deinitialize();
+            return;
+        }
 
-    	trace(ENet.address_set_host(cast adr, "localhost"));
+        trace(ENet.address_set_host(cast adr, "localhost"));
         adr.port = 1234;
 
         peer = ENet.host_connect(client, cast adr, 2, 0);
@@ -54,13 +55,13 @@ class Client {
                 }
             }
 
-            //msg = "" + Std.random(100);
-            //var packet = ENet.packet_create(cast 0, 0, ENetPacketFlag.ENET_PACKET_FLAG_RELIABLE);
-            //trace(ENet.peer_send(peer, 0, packet));
+            var b = Bytes.ofString("This is a message");
+            var packet = ENet.packet_create(b.getData(), b.length, ENetPacketFlag.ENET_PACKET_FLAG_RELIABLE);
+            ENet.peer_send(peer, 0, packet);
         }
 
-    	ENet.host_destroy(client);
+        ENet.host_destroy(client);
 
-    	ENet.deinitialize();
+        ENet.deinitialize();
     }
 }
