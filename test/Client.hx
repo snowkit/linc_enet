@@ -71,7 +71,7 @@ class Client {
             /*
             Please note that we block the loop by reading stdin. 
             ENet cant keep the connection alive if you wait too long(timeout)!
-            For this sample this ok. In the realworld you would avoid that.
+            For this sample this is ok. In the realworld you would avoid that.
             */
 
             cpp.Lib.print("Say > ");
