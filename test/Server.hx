@@ -24,25 +24,34 @@ class Server {
             return;
         }
 
+        trace("Server is listening on port " + adr.port);
+
         while(true) {
             eventStatus = ENet.host_service(server, cast event, 50);
-            //trace(eventStatus);
             if (eventStatus > 0) {
+
+                var peer = event.peer; 
+                var adress = peer.address; 
+                var host = adress.host;
+                
                 switch(event.type) {
                     case ENetEventType.ENET_EVENT_TYPE_CONNECT:
-                        var p = event.peer; var a = p.address; var h = a.host;
-                        trace('Server got a new connection from $h');
+
+                        trace('Server got a new connection from $host');
+
                     case ENetEventType.ENET_EVENT_TYPE_RECEIVE:
                         
                         var b = event.packet.getDataBytes();
-                        var msg = b.toString();
-                        trace('Server received message from client: $msg');
+                        var payload = haxe.Unserializer.run(b.toString());
+                        trace("Server received message from "+host+" - "+payload);
+
+                        // broadcast to all connected clients
                         ENet.host_broadcast(server, 0, event.packet);
 
                     case ENetEventType.ENET_EVENT_TYPE_DISCONNECT:
-                        var p = event.peer; var a = p.address; var h = a.host;
-                        trace('$h disconnected');
-                        p.data = untyped 0;
+                        
+                        trace('$host disconnected from Server');
+
                     default:
                 }
             }
