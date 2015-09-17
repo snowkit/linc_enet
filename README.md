@@ -15,4 +15,4 @@ This library works with the Haxe cpp target only.
 
 ### Example usage
 
-See test/Test.hx
+See the README in `test/`
