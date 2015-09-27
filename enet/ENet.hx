@@ -553,7 +553,7 @@ extern class ENet {
   ////////////////////////////////////////////////////////////////////////////////
   // Socket functions
 
-  @:native('::enet_time_set')
+  @:native('::enet_socket_create')
   static function socket_create (_t:ENetSocketType):ENetSocket;
 
   @:native('::enet_socket_bind')
