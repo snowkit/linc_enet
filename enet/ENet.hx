@@ -268,7 +268,7 @@ extern private class Native_ENetPeer {
   var outgoingSessionID:UInt8;
   var incomingSessionID:UInt8;
   var address:ENetAddress;
-  var data:Pointer<Void>; 
+  var data:cpp.RawPointer<cpp.Void>;
   var state:ENetPeerState;
   var channels:ENetChannelRef;
   var channelCount:Int;
