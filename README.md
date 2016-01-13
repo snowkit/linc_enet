@@ -15,4 +15,7 @@ This library works with the Haxe cpp target only.
 
 ### Example usage
 
+Be sure to visit the ENet homepage
+http://enet.bespin.org/
+
 See the README in `test/`
