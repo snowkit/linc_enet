@@ -84,6 +84,8 @@ from Int to Int {
   * address is updated from ENET_HOST_BROADCAST to the server's actual IP address.
   */
 @:noCompletion
+@:structAccess
+@:unreflective
 @:include('linc_enet.h') @:native("::ENetAddress")
 extern private class Native_ENetAddress {
   var host:Int32;

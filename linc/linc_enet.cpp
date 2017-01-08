@@ -1,6 +1,5 @@
-#include "./linc_enet.h"
-
 #include <hxcpp.h>
+#include "./linc_enet.h"
 
 namespace linc {
 

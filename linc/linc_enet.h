@@ -1,5 +1,4 @@
-#ifndef _LINC_ENET_H_
-#define _LINC_ENET_H_
+#pragma once
 
 #include <hxcpp.h>
 
@@ -14,5 +13,3 @@ namespace linc {
     } //enet namespace
 
 } //linc
-
-#endif //_LINC_ENET_H_
