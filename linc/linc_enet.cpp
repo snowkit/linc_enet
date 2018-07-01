@@ -1,6 +1,5 @@
-#ifndef HXCPP_H
+//hxcpp include should be first
 #include <hxcpp.h>
-#endif
 #include "./linc_enet.h"
 
 namespace linc {
